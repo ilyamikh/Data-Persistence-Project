@@ -18,10 +18,16 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    private GameObject scoreManager;
+
     
     // Start is called before the first frame update
     void Start()
     {
+        scoreManager = GameObject.Find("Score Manager");
+        string playerName = scoreManager.GetComponent<ScoreManager>().GetPlayerName();
+        ScoreText.text = playerName + " " + ScoreText.text;
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
