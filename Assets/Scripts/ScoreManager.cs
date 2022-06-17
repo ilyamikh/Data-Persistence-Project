@@ -6,6 +6,9 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
     private string playerName;
+    private string highScoreOwner;
+    private int highScore;
+    private int sessionScore;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -15,6 +18,7 @@ public class ScoreManager : MonoBehaviour
             return;
         }
         Instance = this;
+        playerName = "Player Name";
         DontDestroyOnLoad(gameObject);
     }
 
@@ -32,5 +36,25 @@ public class ScoreManager : MonoBehaviour
     public string GetPlayerName()
     {
         return playerName;
+    }
+
+    public void SetSessionScore(int score)
+    {
+        sessionScore = score;
+        UpdateHighScore();
+    }
+
+    private void UpdateHighScore()
+    {
+        if (sessionScore > highScore)
+        {
+            highScore = sessionScore;
+            highScoreOwner = playerName;
+        }
+    }
+
+    public string GetHighScoreString()
+    {
+        return highScoreOwner + ": " + highScore;
     }
 }
