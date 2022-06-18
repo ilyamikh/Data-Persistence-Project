@@ -35,6 +35,7 @@ public class MenuHandler : MonoBehaviour
 
     public void Exit()
     {
+        scoreManager.SaveScores();
 #if UNITY_EDITOR
         EditorApplication.ExitPlaymode();
 #else

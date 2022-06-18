@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class ScoreManager : MonoBehaviour
         }
         Instance = this;
         playerName = "Player Name";
+        LoadScores();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -52,9 +54,39 @@ public class ScoreManager : MonoBehaviour
             highScoreOwner = playerName;
         }
     }
-
     public string GetHighScoreString()
     {
         return highScoreOwner + ": " + highScore;
+    }
+
+    [System.Serializable]
+    class Scores
+    {
+        public string ownerName;
+        public int score;
+    }
+
+    public void SaveScores()
+    {
+        Scores data = new Scores();
+        data.ownerName = highScoreOwner;
+        data.score = highScore;
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/score.json", json);
+    }
+
+    public void LoadScores()
+    {
+        string path = Application.persistentDataPath + "/score.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            Scores data = JsonUtility.FromJson<Scores>(json);
+
+            highScoreOwner = data.ownerName;
+            highScore = data.score;
+        }
     }
 }
