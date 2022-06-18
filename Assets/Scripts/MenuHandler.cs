@@ -33,6 +33,12 @@ public class MenuHandler : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    public void SeeScores()
+    {
+        scoreManager.SetName(inputName.text);
+        SceneManager.LoadScene(2);
+    }
+
     public void Exit()
     {
         scoreManager.SaveScores();

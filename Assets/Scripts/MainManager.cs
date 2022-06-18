@@ -19,15 +19,14 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    private GameObject scoreManager;
+    private ScoreManager scoreManager;
 
     
     // Start is called before the first frame update
     void Start()
     {
-        scoreManager = GameObject.Find("Score Manager");
-        ScoreManager scores = scoreManager.GetComponent<ScoreManager>();
-        BestScoreText.text = "Best Score: " + scores.GetHighScoreString();
+        scoreManager = GameObject.Find("Score Manager").GetComponent<ScoreManager>();
+        BestScoreText.text = "Best Score: " + scoreManager.GetHighScoreString();
 
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -72,7 +71,7 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"{scoreManager.GetPlayerName()} Score : {m_Points}";
     }
 
     public void GameOver()
@@ -80,5 +79,6 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
         scoreManager.GetComponent<ScoreManager>().SetSessionScore(m_Points);
+        BestScoreText.text = "Best Score: " + scoreManager.GetHighScoreString();
     }
 }

@@ -10,6 +10,8 @@ public class ScoreManager : MonoBehaviour
     private string highScoreOwner;
     private int highScore;
     private int sessionScore;
+
+    public List<string> scores = new List<string>();
     // Start is called before the first frame update
     private void Awake()
     {
@@ -43,6 +45,7 @@ public class ScoreManager : MonoBehaviour
     public void SetSessionScore(int score)
     {
         sessionScore = score;
+        AddScore();
         UpdateHighScore();
     }
 
@@ -53,6 +56,12 @@ public class ScoreManager : MonoBehaviour
             highScore = sessionScore;
             highScoreOwner = playerName;
         }
+    }
+
+    private void AddScore()
+    {
+        if(scores.Count <= 10)
+            scores.Add(playerName + ": " + sessionScore);
     }
     public string GetHighScoreString()
     {
@@ -87,6 +96,8 @@ public class ScoreManager : MonoBehaviour
 
             highScoreOwner = data.ownerName;
             highScore = data.score;
+
+            scores.Add(GetHighScoreString());
         }
     }
 }
