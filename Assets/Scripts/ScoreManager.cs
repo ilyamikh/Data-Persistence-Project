@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,8 +61,18 @@ public class ScoreManager : MonoBehaviour
 
     private void AddScore()
     {
-        if(scores.Count <= 10)
-            scores.Add(new Score(playerName, sessionScore));
+        Score session = new Score(playerName, sessionScore);
+        if(scores.Count < 10)
+            scores.Add(session);
+        else
+        {
+            scores.Sort();
+            if(session.score > scores[0].score)
+            {
+                scores.Remove(scores[0]);
+                scores.Add(session);
+            }
+        }
     }
     public string GetHighScoreString()
     {
@@ -69,7 +80,7 @@ public class ScoreManager : MonoBehaviour
     }
     
     [System.Serializable]
-    public class Score
+    public class Score : IComparable
     {
         public string ownerName;
         public int score;
@@ -83,6 +94,17 @@ public class ScoreManager : MonoBehaviour
         public string GetScoreString()
         {
             return ownerName + ": " + score;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+                return 1;
+
+            Score otherScore = obj as Score;
+            if (otherScore != null)
+                return this.score.CompareTo(otherScore.score);
+            else throw new ArgumentException("Object is not a Score");
         }
     }
 
@@ -155,10 +177,6 @@ public class ScoreManager : MonoBehaviour
         {
             string json = File.ReadAllText(highScorePath);
             Score data = JsonUtility.FromJson<Score>(json);
-
-            highScoreOwner = data.ownerName;
-            highScore = data.score;
-
         }
 
         if (File.Exists(allScorePath))
@@ -166,6 +184,10 @@ public class ScoreManager : MonoBehaviour
             string json = File.ReadAllText(allScorePath);
             ScoreList data = JsonUtility.FromJson <ScoreList>(json);
             scores = data.allScores;
+            scores.Sort();
+
+            highScore = scores[scores.Count - 1].score;
+            highScoreOwner = scores[scores.Count - 1].ownerName;
         }
 
     }

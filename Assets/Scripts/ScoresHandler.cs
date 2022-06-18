@@ -27,10 +27,17 @@ public class ScoresHandler : MonoBehaviour
         
         string scoreList = "";
 
-        foreach(ScoreManager.Score item in scoreManager.scores)
+        if (scoreManager.scores.Count < 1)
+            return scoreList;
+        else
         {
-            string scoreString = item.ownerName + ":\t" + item.score + System.Environment.NewLine;
-            scoreList += scoreString;
+            scoreManager.scores.Sort();
+
+            for(int i = scoreManager.scores.Count - 1; i >= 0; i--)
+            {
+                string scoreString = scoreManager.scores[i].GetScoreString() + System.Environment.NewLine;
+                scoreList += scoreString;
+            }
         }
 
         return scoreList;
