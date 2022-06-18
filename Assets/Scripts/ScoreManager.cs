@@ -11,7 +11,7 @@ public class ScoreManager : MonoBehaviour
     private int highScore;
     private int sessionScore;
 
-    public List<string> scores = new List<string>();
+    public List<Score> scores = new List<Score>();
     // Start is called before the first frame update
     private void Awake()
     {
@@ -61,7 +61,7 @@ public class ScoreManager : MonoBehaviour
     private void AddScore()
     {
         if(scores.Count <= 10)
-            scores.Add(playerName + ": " + sessionScore);
+            scores.Add(new Score(playerName, sessionScore));
     }
     public string GetHighScoreString()
     {
@@ -69,17 +69,22 @@ public class ScoreManager : MonoBehaviour
     }
 
     [System.Serializable]
-    class Scores
+    public class Score
     {
         public string ownerName;
         public int score;
+
+        public Score(string inName, int pts)
+        {
+            ownerName = inName;
+            score = pts;
+
+        }
     }
 
     public void SaveScores()
     {
-        Scores data = new Scores();
-        data.ownerName = highScoreOwner;
-        data.score = highScore;
+        Score data = new Score(highScoreOwner, highScore);
 
         string json = JsonUtility.ToJson(data);
 
@@ -92,12 +97,12 @@ public class ScoreManager : MonoBehaviour
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            Scores data = JsonUtility.FromJson<Scores>(json);
+            Score data = JsonUtility.FromJson<Score>(json);
 
             highScoreOwner = data.ownerName;
             highScore = data.score;
 
-            scores.Add(GetHighScoreString());
+            scores.Add(new Score(highScoreOwner, highScore));
         }
     }
 }

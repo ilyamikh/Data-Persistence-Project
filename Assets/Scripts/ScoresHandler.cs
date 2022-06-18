@@ -27,9 +27,9 @@ public class ScoresHandler : MonoBehaviour
         
         string scoreList = "";
 
-        foreach(string item in scoreManager.scores)
+        foreach(ScoreManager.Score item in scoreManager.scores)
         {
-            string scoreString = item + System.Environment.NewLine;
+            string scoreString = item.ownerName + ":\t" + item.score + System.Environment.NewLine;
             scoreList += scoreString;
         }
 
