@@ -67,7 +67,7 @@ public class ScoreManager : MonoBehaviour
     {
         return highScoreOwner + ": " + highScore;
     }
-
+    
     [System.Serializable]
     public class Score
     {
@@ -78,31 +78,95 @@ public class ScoreManager : MonoBehaviour
         {
             ownerName = inName;
             score = pts;
+        }
 
+        public string GetScoreString()
+        {
+            return ownerName + ": " + score;
         }
     }
 
-    public void SaveScores()
+    [System.Serializable]
+    public class ScoreArray
+    {
+        public string[] players;
+        public int[] scores;
+
+        public ScoreArray(List<Score> inList)
+        {
+            players = new string[inList.Count];
+            scores = new int[inList.Count];
+
+            for (int i = 0; i < inList.Count; i++){
+                players[i] = inList[i].ownerName;
+                scores[i] = inList[i].score;
+            }
+        }
+
+        public void ShowScores()
+        {
+            for(int i = 0; i < players.Length; i++)
+            {
+                Debug.Log(players[i] + ": " + scores[i] + System.Environment.NewLine);
+            }
+        }
+    }
+
+    [System.Serializable]
+    public class ScoreList
+    {
+        public List<Score> allScores = new List<Score>();
+
+        public ScoreList(List<Score> inList)
+        {
+            allScores = inList;
+        }
+
+        public void ShowScores()
+        {
+            foreach(Score item in allScores)
+            {
+                Debug.Log(item.GetScoreString() + System.Environment.NewLine);
+            }
+        }
+    }
+    public void SaveHighScore()
     {
         Score data = new Score(highScoreOwner, highScore);
 
         string json = JsonUtility.ToJson(data);
 
-        File.WriteAllText(Application.persistentDataPath + "/score.json", json);
+        File.WriteAllText(Application.persistentDataPath + "/highscore.json", json);
+    }
+
+    public void SaveScoreList()
+    {
+        ScoreList saveScores = new ScoreList(scores);
+        string json = JsonUtility.ToJson(saveScores);
+        File.WriteAllText(Application.persistentDataPath + "/allscores.json", json);
     }
 
     public void LoadScores()
     {
-        string path = Application.persistentDataPath + "/score.json";
-        if (File.Exists(path))
+        string highScorePath = Application.persistentDataPath + "/highscore.json";
+        string allScorePath = Application.persistentDataPath + "/allscores.json";
+
+        if (File.Exists(highScorePath))
         {
-            string json = File.ReadAllText(path);
+            string json = File.ReadAllText(highScorePath);
             Score data = JsonUtility.FromJson<Score>(json);
 
             highScoreOwner = data.ownerName;
             highScore = data.score;
 
-            scores.Add(new Score(highScoreOwner, highScore));
         }
+
+        if (File.Exists(allScorePath))
+        {
+            string json = File.ReadAllText(allScorePath);
+            ScoreList data = JsonUtility.FromJson <ScoreList>(json);
+            scores = data.allScores;
+        }
+
     }
 }
